@@ -10,7 +10,9 @@ module Infoblox
   module Api
 
     def connection
-      creds = data_bag_item(node['infoblox']['data_bag_name'], node['infoblox']['data_bag_item']) rescue {}
+      # If node.run_state contains a non-nil entry 'infoblox-data_bag_secret', that value will be
+      # used as the key for the data bag.
+      creds = data_bag_item(node['infoblox']['data_bag_name'], node['infoblox']['data_bag_item'], node.run_state['infoblox-data_bag_secret']) rescue {}
       @connection ||= Infoblox::Connection.new( username: creds['username'] || node['infoblox']['username'],
                                                 password: creds['password'] || node['infoblox']['password'],
                                                 host: creds['hostname'] || node['infoblox']['nios_appliance'] )
